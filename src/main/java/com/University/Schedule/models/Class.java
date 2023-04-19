@@ -40,8 +40,6 @@ public class Class {
     @ManyToMany(mappedBy = "classes")
     private Set<Student> students;
 
-    @OneToMany(mappedBy = "aClass", cascade = CascadeType.ALL)
-    private Set<Schedule> schedules;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "course_id")
     private Course course;

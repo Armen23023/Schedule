@@ -1,9 +1,10 @@
-package com.University.Schedule.service;
+package com.University.Schedule.service.Student;
 
 import com.University.Schedule.config.JwtService;
 import com.University.Schedule.models.Student;
 import com.University.Schedule.repository.StudentRepository;
 import com.University.Schedule.repository.token.Token;
+import com.University.Schedule.service.ConfirmationTokenService;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

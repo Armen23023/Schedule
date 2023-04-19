@@ -11,8 +11,11 @@ import com.University.Schedule.models.Student;
 import com.University.Schedule.repository.StudentRepository;
 import com.University.Schedule.repository.token.Token;
 import com.University.Schedule.repository.token.TokenRepository;
+import com.University.Schedule.service.Student.StudentService;
 import com.University.Schedule.validator.EmailValidator;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -58,7 +61,7 @@ public class AuthenticationService {
                    student
             );
 
-            String link = "http://localhost:8080/student/confirm?token=" + token;
+            String link = "http://localhost:8080/authenticate/confirm?token=" + token;
             emailSender.send(
                     request.getEmail(),
                     buildEmail(request.getFirstname(), link));
@@ -73,21 +76,25 @@ public class AuthenticationService {
         }
     }
 
-    public AuthenticationResponse authenticate(AuthenticationRequest request) {
+    public ResponseEntity<AuthenticationResponse> authenticate(AuthenticationRequest request) {
         Authentication authenticate = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         request.getEmail(),
                         request.getPassword()
                 )
         );
-        var student = repository.findByEmail(request.getEmail())
+        Student student = repository.findByEmail(request.getEmail())
             .orElseThrow();
 
         if (student.getEnabled()) {
             var jwtToken = jwtService.generateToken(student);
-            return AuthenticationResponse.builder()
-                    .token(jwtToken)
-                    .build();
+            HttpHeaders responseHeaders = new HttpHeaders();
+            responseHeaders.add("Authorization",  jwtToken);
+            return ResponseEntity.ok()
+                    .headers(responseHeaders)
+                    .body(AuthenticationResponse.builder()
+                            .token(jwtToken)
+                            .build());
         }
         else throw new IllegalStateException("Email is not verified");
 

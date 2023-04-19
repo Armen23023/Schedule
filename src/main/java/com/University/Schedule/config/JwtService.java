@@ -18,6 +18,7 @@ import java.util.function.Function;
 public class JwtService {
 
     private static final String SECRET_KEY = "3272357538782F413F4428472B4B6150645367566B5970337336763979244226";
+
     public String extractUsername(String token) {
         return extractClaim(token,Claims::getSubject);
     }
@@ -48,7 +49,7 @@ public class JwtService {
 
     public boolean isTokenValid(String token, UserDetails userDetails){
         final String username = extractUsername(token);
-        return (username.equals(userDetails.getUsername())) && !isTokenExpired(token);
+        return /*userDetails!=null &&*/ (username.equals(userDetails.getUsername())) && !isTokenExpired(token);
     }
 
     private boolean isTokenExpired(String token) {
