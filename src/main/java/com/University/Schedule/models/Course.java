@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
 
+import java.time.LocalDate;
 import java.util.Set;
 
 @Entity
@@ -20,6 +21,9 @@ public class Course {
 
     @Column(name = "course_name")
     private String name;
+
+    @Column
+    private LocalDate year;
 
     @OneToMany(mappedBy = "course", cascade = CascadeType.ALL)
     private Set<Class> classes;

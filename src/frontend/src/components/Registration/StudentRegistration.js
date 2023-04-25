@@ -1,14 +1,20 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 import "./StudentRegistration.css";
-import { useLocalState } from '../../util/useLocalStorage';
-import { message } from "antd";
-import ajax from "../../Services/fetchService";
+import {  useNavigate } from "react-router-dom";
+import { useUser } from "../../userProvider";
 
 
 
-function StudentRegistration() {
-  const [jwt , setJwt ] =  useLocalState("", "jwt");
+
+const StudentRegistration = () => {
+  const user  = useUser();
+  const navigate = useNavigate();
+  const [errorMsg, setErrorMsg] = useState(null);
+
+  // useEffect(()=>{
+  //   if(user.jwt) navigate("/dashboard");
+  // },[user]);
 
   const [isLogin, setIsLogin] = useState(true);
   const [formData, setFormData] = useState({
@@ -39,14 +45,13 @@ function StudentRegistration() {
         
         console.log("Im sending a request");
           
-  
+      setErrorMsg("");
     const reqBody = {
       email : formData.email,
       password : formData.password
     };
 
 
-    // ajax("authenticate/login",null,)
     fetch("authenticate/login",{
       headers:{
         "Content-Type": "application/json",
@@ -55,15 +60,22 @@ function StudentRegistration() {
       method : "post",
       body : JSON.stringify(reqBody),
     }).then((response) => {
-        if(response.status === 200)
-          return Promise.all([response.json(), response.headers]);
-        else return Promise.reject("Invalid login or password");
-      })
-      .then(([body,headers]) =>{ 
-         setJwt(headers.get("authorization"));
-         window.location.href = "dashboard";
-    }).catch((message) =>{
-        alert(message);
+      if (response.status === 200) return response.text();
+      else if (response.status === 401 || response.status === 403) {
+        setErrorMsg("Invalid username or password");
+      } else {
+        setErrorMsg(
+          "Something went wrong,"
+        );
+      }
+    })
+    .then((data) => {
+      if (data) {
+        user.setJwt(data);
+        var token = JSON.parse(data).token;
+        localStorage.setItem("BearerToken", token)
+        navigate("/dashboard");
+      }
     });
   
 
@@ -81,6 +93,7 @@ function StudentRegistration() {
           password: formData.password,
           confirmPassword: formData.confirmPassword
         });
+        alert("Գրանցումը հաջողությամբ ավարտվեց");
         console.log(response.data);
       }
     } catch (error) {
@@ -102,40 +115,40 @@ function StudentRegistration() {
   };
 
   return (
-       <div class="body">
-    <div className="wrapper">
-      <div className="form-container">
-        <div className="slide-controls">
+    <head id = "my-page">
+    <div class="wrapper">
+      <div class="form-container">
+        <div class="slide-controls">
           <input type="radio" name="slide" id="login" checked={isLogin} />
           <input type="radio" name="slide" id="signup" checked={!isLogin} />
-          <label htmlFor="login" className="slide login" onClick={() => setIsLogin(true)}>
-            Login
+          <label htmlFor="login" class="slide login" onClick={() => setIsLogin(true)}>
+            Մուտք գործել
           </label>
-          <label htmlFor="signup" className="slide signup" onClick={() => setIsLogin(false)}>
-            Signup
+          <label htmlFor="signup" class="slide signup" onClick={() => setIsLogin(false)}>
+            Ստեղծել նոր հաշիվ
           </label>
-          <div className="slider-tab"></div>
+          <div class="slider-tab"></div>
         </div>
-        <div className="form-inner">
+        <div class="form-inner">
           <form onSubmit={handleSubmit}>
             {isLogin ? (
               <>
-                <div className="field">
+                <div class="field">
                   <input
                     type="email"
                     id="email"
                     name="email"
-                    placeholder="Email"
+                    placeholder="Էլփոստ"
                     value={formData.email}
                     onChange={handleChange}
                   />
                 </div>
-                <div className="field">
+                <div class="field">
                   <input
                     type="password"
                     id="password"
                     name="password"
-                    placeholder="Password"
+                    placeholder="Գաղտնաբառ"
                     value={formData.password}
                     onChange={handleChange}
                   />
@@ -143,62 +156,62 @@ function StudentRegistration() {
               </>
             ) : (
               <>
-                <div className="field">
+                <div class="field">
                   <input
                     type="text"
                     id="firstname"
                     name="firstname"
-                    placeholder="Firstname"
+                    placeholder="Անուն"
                     value={formData.firstname}
                     onChange={handleChange}
                   />
                 </div>
-                <div className="field">
+                <div class="field">
                   <input
                     type="text"
                     id="lastname"
                     name="lastname"
-                    placeholder="Lastname"
+                    placeholder="Ազգանուն"
                     value={formData.lastname}
                     onChange={handleChange}
                   />
                 </div>
-                <div className="field">
+                <div class="field">
                   <input
                     type="email"
                     id="email"
                     name="email"
-                    placeholder="Email"
+                    placeholder="Էլփոստ"
                     value={formData.email}
                     onChange={handleChange}
                   />
                 </div>
-                <div className="field">
+                <div class="field">
                   <input
                     type="number"
                     id="age"
                     name="age"
-                    placeholder="Age"
+                    placeholder="Տարիք"
                     value={formData.number}
                     onChange={handleChange}
                   />
                 </div>
-                <div className="field">
+                <div class="field">
                   <input
                     type="password"
                     id="password"
                     name="password"
-                    placeholder="Password"
+                    placeholder="Գաղտնաբառ"
                     value={formData.password}
                     onChange={handleChange}
                   />
                 </div>
-                <div className="field">
+                <div class="field">
                   <input
                     type="password"
                     id="confirm-password"
                     name="confirmPassword"
-                    placeholder="Confirm Password"
+                    placeholder="Հաստատել գաղտնաբառը"
                     value={formData.confirmPassword}
                     onChange={handleChange}
                   />
@@ -207,7 +220,7 @@ function StudentRegistration() {
             )}
             <button type="submit" id="reg" class="btn btn-rounded btn-primary btn-block" >{isLogin ? "Login" : "Signup"}</button>
           </form>
-          <div className="form-text">
+          <div class="form-text">
                         {isLogin ? (
                 <>
                  Don't have an account?{" "}
@@ -219,7 +232,7 @@ function StudentRegistration() {
                 <>
                    Already have an account?{" "}
                   <button type="button" onClick={handleSwitchMode}>
-                    Login
+                  Մուտք գործել
                       </button>
                   </>
                   )}
@@ -228,7 +241,7 @@ function StudentRegistration() {
         </div>
       </div>
     </div>
-    </div>
+    </head>
   );
 }
 

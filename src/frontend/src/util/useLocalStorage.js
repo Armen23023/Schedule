@@ -7,7 +7,7 @@ function useLocalState (defaultValue,key) {
         return localStorageValue !== null 
         ? JSON.parse(localStorageValue)
          : defaultValue;
-    });
+    }); 
 
     useEffect(() => {
         localStorage.setItem(key,JSON.stringify(value));

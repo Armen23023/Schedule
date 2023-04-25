@@ -1,5 +1,6 @@
 package com.University.Schedule.service;
 
+import ch.qos.logback.core.util.Duration;
 import com.University.Schedule.config.JwtService;
 import com.University.Schedule.dto.request.AuthenticationRequest;
 import com.University.Schedule.dto.request.RegisterRequest;
@@ -14,9 +15,13 @@ import com.University.Schedule.repository.token.TokenRepository;
 import com.University.Schedule.service.Student.StudentService;
 import com.University.Schedule.validator.EmailValidator;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -39,6 +44,9 @@ public class AuthenticationService {
     private final StudentService studentService;
 
     private final TokenRepository tokenRepository;
+
+    @Value("${cookies.domain}")
+    private String domain;
 
     private final ConfirmationTokenService confirmationTokenService;
     public AuthenticationResponse register(RegisterRequest request) {
@@ -77,26 +85,29 @@ public class AuthenticationService {
     }
 
     public ResponseEntity<AuthenticationResponse> authenticate(AuthenticationRequest request) {
-        Authentication authenticate = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        request.getEmail(),
-                        request.getPassword()
-                )
-        );
+        try {
+
         Student student = repository.findByEmail(request.getEmail())
             .orElseThrow();
 
         if (student.getEnabled()) {
             var jwtToken = jwtService.generateToken(student);
-            HttpHeaders responseHeaders = new HttpHeaders();
-            responseHeaders.add("Authorization",  jwtToken);
+            ResponseCookie cookie = ResponseCookie.from("jwt",jwtToken)
+                    .domain(domain)
+                    .path("/")
+                    .maxAge(Duration.buildByDays(365).getMilliseconds())
+                    .build();
+
             return ResponseEntity.ok()
-                    .headers(responseHeaders)
+                    .header(HttpHeaders.SET_COOKIE, cookie.toString())
                     .body(AuthenticationResponse.builder()
                             .token(jwtToken)
                             .build());
         }
         else throw new IllegalStateException("Email is not verified");
+        } catch (BadCredentialsException ex) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
 
     }
 

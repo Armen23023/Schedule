@@ -50,7 +50,7 @@ public class StudentService implements UserDetailsService {
 
         studentRepository.save(student);
 
-        String token = jwtService.generateToken(student);
+        String token = jwtService.rgenerateToken(student);
 
         Token confirmationToken = new Token(
                 token,

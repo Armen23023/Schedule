@@ -10,8 +10,24 @@ import {
     TeamOutlined,
     UserOutlined,
   } from '@ant-design/icons';
+import { useUser } from '../../userProvider';
 
   
+
+function parseJwt (token) {
+  var base64Url = token.split('.')[1];
+  var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+  var jsonPayload = decodeURIComponent(window.atob(base64).split('').map(function(c) {
+      return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+  }).join(''));
+
+  return JSON.parse(jsonPayload);
+}
+
+var jwtObj = parseJwt(localStorage.getItem('BearerToken')) ;
+var firstname = jwtObj.user.firstname;
+
+
   const { Header, Content, Footer, Sider } = Layout;
   function getItem(label, key, icon, children,href) {
     return {
@@ -25,7 +41,7 @@ import {
   const items = [
     getItem('Դասացուցակներ', '1', <DesktopOutlined />,undefined,'schedule'),
     getItem('Դասախոսներ', '2', <IdcardTwoTone />,undefined),
-    getItem('User', 'sub1', <UserOutlined />, [
+    getItem(firstname, 'sub1', <UserOutlined />, [
       getItem('Իմ Էջը','3',<UserOutlined />,undefined),
       getItem('Կարգավորումներ','4',<SettingOutlined />,undefined),
       getItem('Դորս գալ','5',<ImportOutlined />,undefined,'login'),
@@ -40,11 +56,6 @@ import {
 
 const Index = () => {
     const [collapsed, setCollapsed] = useState(false);
-  
-
-
-
-
 
 
 
