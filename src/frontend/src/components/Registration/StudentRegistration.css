@@ -9,10 +9,10 @@
 
 #my-page{
   display: grid;
-  height: 100%;
+  height: 100vh;
   width: 100%;
   place-items: center;
-  background: -webkit-linear-gradient(left, #615280, #16006d);
+  background: -webkit-linear-gradient(left, #b7b4bc, #16006d);
 }
 ::selection{
   background: #1f029e;

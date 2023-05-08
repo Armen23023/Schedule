@@ -5,6 +5,7 @@ import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
 
 import java.time.LocalDate;
+import java.time.Year;
 import java.util.Set;
 
 @Entity
@@ -23,8 +24,11 @@ public class Course {
     private String name;
 
     @Column
-    private LocalDate year;
+    private Integer year;
 
     @OneToMany(mappedBy = "course", cascade = CascadeType.ALL)
     private Set<Class> classes;
+
+    @ManyToMany(mappedBy = "classes")
+    private Set<Student> students;
 }

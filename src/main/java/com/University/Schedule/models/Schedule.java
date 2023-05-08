@@ -11,8 +11,7 @@ import org.hibernate.annotations.GenericGenerator;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "course")
-
+@Table(name = "schedule")
 public class Schedule {
 
     @Id
@@ -25,16 +24,15 @@ public class Schedule {
     @Enumerated(EnumType.STRING)
     private Day day;
 
-    @Column
-    private int sch_dayOrder;
+
 
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name="sch_class_id", nullable=false)
-    private Class sch_class;
+    private Class schClass;
 
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name="sch_course_id", nullable=false)
-    private Course course;
+    private Course schCourse;
 
 
 

@@ -60,7 +60,7 @@ public class Student implements UserDetails {
     @JoinTable(
             name = "enrollment",
             joinColumns = @JoinColumn(name = "student_id"),
-            inverseJoinColumns = @JoinColumn(name = "class_id"))
+            inverseJoinColumns = @JoinColumn(name = "course_id"))
     private Set<Class> classes;
 
     @Enumerated(EnumType.STRING)

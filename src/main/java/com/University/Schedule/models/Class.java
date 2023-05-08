@@ -21,7 +21,7 @@ public class Class {
     @Column(name = "id")
     private int id;
 
-    @Column
+    @Column(name = "class_name")
     private String name;
 
     @Column
@@ -37,8 +37,7 @@ public class Class {
     @JoinColumn(name="instructor_id", nullable=false)
     private Instructor instructor;
 
-    @ManyToMany(mappedBy = "classes")
-    private Set<Student> students;
+
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "course_id")

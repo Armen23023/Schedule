@@ -2,7 +2,8 @@ import React,{useEffect, useState} from 'react';
 import StudentRegistration from './components/Registration/StudentRegistration';
 import Home from './components/Home/index';
 import Dashboard from './components/Dashboard/index';
-import Schedule1 from './components/Schedule1/index';
+import Instructor from './components/Instructor/index';
+import HomePage from './components/HomePage/index';
 import { Route, Routes } from 'react-router-dom';
 import PrivateRoute from './PrivateRoute';
  
@@ -17,7 +18,8 @@ function App() {
       <Route path="/login" element={ <StudentRegistration/>} />
       <Route path="/dashboard" element={ <PrivateRoute> <Dashboard/>  </PrivateRoute>} />
       <Route path='/' element={ <Home/>} /> 
-      <Route path='/schedule' element={  <PrivateRoute> <Schedule1/> </PrivateRoute>  } /> 
+      <Route path='/instructor' element={  <PrivateRoute> <Instructor/> </PrivateRoute>  } /> 
+      <Route path='/homepage' element={  <PrivateRoute> < HomePage/> </PrivateRoute>  } />
     </Routes>
   );  
 }

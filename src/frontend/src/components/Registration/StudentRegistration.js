@@ -3,7 +3,7 @@ import axios from "axios";
 import "./StudentRegistration.css";
 import {  useNavigate } from "react-router-dom";
 import { useUser } from "../../userProvider";
-
+import Swal from "sweetalert2";
 
 
 
@@ -93,7 +93,16 @@ const StudentRegistration = () => {
           password: formData.password,
           confirmPassword: formData.confirmPassword
         });
-        alert("Գրանցումը հաջողությամբ ավարտվեց");
+        Swal.fire({
+          icon: "success",
+          title: "Հաստատված է",
+          iconColor: "#850c23",
+          confirmButtonColor: "#850c23",
+          confirmButtonText: "Լավ",
+          customClass: {
+            title: "my-swal-title-class",
+          },
+        });
         console.log(response.data);
       }
     } catch (error) {
@@ -115,7 +124,7 @@ const StudentRegistration = () => {
   };
 
   return (
-    <head id = "my-page">
+    <div id = "my-page">
     <div class="wrapper">
       <div class="form-container">
         <div class="slide-controls">
@@ -218,7 +227,7 @@ const StudentRegistration = () => {
                 </div>
               </>
             )}
-            <button type="submit" id="reg" class="btn btn-rounded btn-primary btn-block" >{isLogin ? "Login" : "Signup"}</button>
+            <button type="submit" id="reg" class="btn btn-rounded btn-primary btn-block" >{isLogin ? "Մուտք գործել" : "Ստեղծել"}</button>
           </form>
           <div class="form-text">
                         {isLogin ? (
@@ -241,7 +250,7 @@ const StudentRegistration = () => {
         </div>
       </div>
     </div>
-    </head>
+    </div>
   );
 }
 

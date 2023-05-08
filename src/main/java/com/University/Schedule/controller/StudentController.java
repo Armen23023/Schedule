@@ -12,7 +12,5 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("student")
 public class StudentController {
 
-//    @PostMapping("/course")
-//    public void setCourse(@AuthenticationPrincipal Student student,
-//                          @RequestBody )
+
 }

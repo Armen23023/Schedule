@@ -20,7 +20,7 @@ const index = () => {
   <div class="intro">
     <h1>Դասացուցակներ</h1>
     <p>Հայաստանի ազգային պոլիտեխնիկական համալսարան</p>
-    <button><a href="/login">Մուտք գործել</a></button>
+    <button><a href="/dashboard">Մուտք գործել</a></button>
   </div>
   <div class="achievements">
     <div class="work">
